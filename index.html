@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grid Rush — Variant Sudoku Solver</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <!-- Header -->
+  <header>
+    <div class="logo-wrap">
+      <div class="logo-icon">GR</div>
+      <div>
+        <h1>Grid Rush</h1>
+        <p class="tagline">Variant Sudoku Solver</p>
+      </div>
+    </div>
+    <nav>
+      <button class="nav-btn active" data-tab="solver">Solver</button>
+      <button class="nav-btn" data-tab="docs">Input Guide</button>
+    </nav>
+  </header>
+
+  <!-- SOLVER TAB -->
+  <main id="tab-solver" class="tab active">
+    <div class="layout">
+
+      <!-- LEFT PANEL: Controls -->
+      <aside class="panel-left">
+        <section class="card">
+          <h2>Puzzle Setup</h2>
+          <label>Active Variants</label>
+          <div class="variant-chips" id="variantChips">
+            <button class="chip active" data-v="classic">Classic</button>
+            <button class="chip" data-v="evenodd">Even/Odd</button>
+            <button class="chip" data-v="killer">Killer</button>
+            <button class="chip" data-v="thermo">Thermo</button>
+            <button class="chip" data-v="arrow">Arrow</button>
+            <button class="chip" data-v="kropki">Kropki</button>
+          </div>
+        </section>
+
+        <section class="card" id="sec-evenodd" style="display:none">
+          <h2>Even / Odd Cells</h2>
+          <p class="hint">Click cells on the grid to mark them as <span class="badge-even">EVEN</span> or <span class="badge-odd">ODD</span>, then press Done.</p>
+          <div class="row-btns">
+            <button class="sm-btn" id="btnMarkEven">Mark Even</button>
+            <button class="sm-btn" id="btnMarkOdd">Mark Odd</button>
+            <button class="sm-btn outline" id="btnClearEO">Clear</button>
+          </div>
+          <div id="eoPreview" class="constraint-list"></div>
+        </section>
+
+        <section class="card" id="sec-killer" style="display:none">
+          <h2>Killer Cages</h2>
+          <p class="hint">Select cells → enter sum → Add Cage.</p>
+          <div class="row-btns">
+            <button class="sm-btn" id="btnSelectCage">Select Cells</button>
+            <input class="num-input" id="cageSum" type="number" min="1" max="405" placeholder="Sum">
+            <button class="sm-btn" id="btnAddCage">Add Cage</button>
+          </div>
+          <div id="cageList" class="constraint-list"></div>
+        </section>
+
+        <section class="card" id="sec-thermo" style="display:none">
+          <h2>Thermometers</h2>
+          <p class="hint">Click cells in order (bulb first). Values must increase along the thermo.</p>
+          <div class="row-btns">
+            <button class="sm-btn" id="btnAddThermo">New Thermo</button>
+            <button class="sm-btn outline" id="btnFinishThermo">Finish</button>
+          </div>
+          <div id="thermoList" class="constraint-list"></div>
+        </section>
+
+        <section class="card" id="sec-arrow" style="display:none">
+          <h2>Arrow Sudoku</h2>
+          <p class="hint">Click circle cell first, then arrow cells in order.</p>
+          <div class="row-btns">
+            <button class="sm-btn" id="btnAddArrow">New Arrow</button>
+            <button class="sm-btn outline" id="btnFinishArrow">Finish</button>
+          </div>
+          <div id="arrowList" class="constraint-list"></div>
+        </section>
+
+        <section class="card" id="sec-kropki" style="display:none">
+          <h2>Kropki Dots</h2>
+          <p class="hint">Click two adjacent cells, pick dot type.</p>
+          <div class="row-btns">
+            <button class="sm-btn" id="btnKropkiMode">Pick Cells</button>
+          </div>
+          <div class="row-btns" id="kropkiTypeRow" style="display:none">
+            <button class="sm-btn" id="btnKBlack">⚫ Black (×2)</button>
+            <button class="sm-btn" id="btnKWhite">⚪ White (±1)</button>
+          </div>
+          <div id="kropkiList" class="constraint-list"></div>
+        </section>
+
+        <section class="card">
+          <div class="row-btns">
+            <button class="primary-btn" id="btnSolve">▶ Solve</button>
+            <button class="sm-btn outline" id="btnReset">Reset All</button>
+            <button class="sm-btn outline" id="btnLoadExample">Load Example</button>
+          </div>
+          <div id="statusMsg" class="status-msg"></div>
+        </section>
+      </aside>
+
+      <!-- CENTER: Grid -->
+      <div class="panel-center">
+        <div class="grid-container">
+          <div id="sudokuGrid" class="sudoku-grid"></div>
+          <div id="overlayCanvas" class="overlay-canvas">
+            <svg id="constraintSvg" width="100%" height="100%" viewBox="0 0 540 540"></svg>
+          </div>
+        </div>
+        <div class="grid-actions">
+          <button class="sm-btn outline" id="btnClearGrid">Clear Grid</button>
+          <button class="sm-btn outline" id="btnClearConstraints">Clear Constraints</button>
+          <span class="mode-indicator" id="modeIndicator">Mode: Input</span>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL: Steps -->
+      <aside class="panel-right">
+        <section class="card steps-card">
+          <h2>Solving Steps</h2>
+          <div id="stepsLog" class="steps-log">
+            <p class="empty-msg">Solve a puzzle to see step-by-step reasoning here.</p>
+          </div>
+        </section>
+        <section class="card" id="jsonCard">
+          <h2>Puzzle JSON</h2>
+          <button class="sm-btn outline" id="btnExportJson" style="margin-bottom:8px">Export JSON</button>
+          <button class="sm-btn outline" id="btnImportJson" style="margin-bottom:8px">Import JSON</button>
+          <textarea id="jsonArea" class="json-area" rows="8" placeholder='Paste puzzle JSON here...'></textarea>
+
+          <div style="height: 10px"></div>
+
+          <h2 style="margin-top:4px">Show Solution</h2>
+          <div class="row-btns" style="margin-bottom:10px">
+            <input id="answerFileInput" type="file" accept="application/json" style="flex: 1; min-width: 170px;">
+            <button class="sm-btn outline" id="btnShowAnswer">Show</button>
+          </div>
+          <select id="answerPuzzleSelect" style="width: 100%; margin-bottom: 10px; padding: 10px; background: var(--bg3); border: 1px solid var(--border); color: var(--text); border-radius: var(--radius); font-family: var(--font-ui);"></select>
+          <div id="answerLoadStatus" class="status-msg"></div>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <!-- DOCS TAB -->
+  <main id="tab-docs" class="tab">
+    <div class="docs-wrap">
+      <h2>Input Guide & Schema Documentation</h2>
+      <p>Grid Rush accepts puzzles in a simple JSON format. Below is the complete schema reference.</p>
+
+      <div class="doc-section">
+        <h3>Full Schema</h3>
+        <pre class="code-block">{
+  "grid": [
+    [0,0,0, 0,0,0, 0,0,0],  // 9 rows × 9 cols
+    ...                       // 0 = empty cell
+  ],
+  "variants": {
+    "evenodd": {
+      "even": [[0,1],[3,5]],  // [row,col] 0-indexed
+      "odd":  [[2,2],[4,4]]
+    },
+    "killer": {
+      "cages": [
+        { "cells": [[0,0],[0,1],[0,2]], "sum": 15 },
+        { "cells": [[1,0],[2,0]],       "sum": 8  }
+      ]
+    },
+    "thermo": {
+      "thermos": [
+        [[2,3],[2,4],[2,5]],  // bulb first, increasing order
+        [[5,0],[6,0],[7,0]]
+      ]
+    },
+    "arrow": {
+      "arrows": [
+        { "circle": [0,0], "arrow": [[0,1],[0,2],[1,2]] }
+      ]
+    },
+    "kropki": {
+      "dots": [
+        { "cells": [[0,0],[0,1]], "type": "black" },  // one is 2× other
+        { "cells": [[1,1],[1,2]], "type": "white" }   // consecutive
+      ]
+    }
+  }
+}</pre>
+      </div>
+
+      <div class="doc-section">
+        <h3>Variant Rules Summary</h3>
+        <div class="rules-grid">
+          <div class="rule-card">
+            <div class="rule-icon">♟</div>
+            <h4>Classic</h4>
+            <p>Each row, column, and 3×3 box must contain 1–9 exactly once.</p>
+          </div>
+          <div class="rule-card">
+            <div class="rule-icon">⊙</div>
+            <h4>Even / Odd</h4>
+            <p>Cells marked even may only contain 2,4,6,8. Cells marked odd may only contain 1,3,5,7,9.</p>
+          </div>
+          <div class="rule-card">
+            <div class="rule-icon">⬡</div>
+            <h4>Killer</h4>
+            <p>Cells in a cage must sum to the cage total. Digits cannot repeat within a cage.</p>
+          </div>
+          <div class="rule-card">
+            <div class="rule-icon">🌡</div>
+            <h4>Thermo</h4>
+            <p>Values must strictly increase from the bulb end to the tip of the thermometer.</p>
+          </div>
+          <div class="rule-card">
+            <div class="rule-icon">→</div>
+            <h4>Arrow</h4>
+            <p>Digits on the arrow cells must sum to the digit in the circle. Repeats allowed on arrow.</p>
+          </div>
+          <div class="rule-card">
+            <div class="rule-icon">●</div>
+            <h4>Kropki</h4>
+            <p>Black dot: one cell is double the other. White dot: cells are consecutive. Not all dots shown.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="doc-section">
+        <h3>GUI Workflow</h3>
+        <ol class="workflow-list">
+          <li>Toggle the variant chips to activate the constraints you need.</li>
+          <li>Type known digits directly into the grid cells.</li>
+          <li>Use the left panel sections that appear for each active variant to enter constraints (cages, thermos, arrows, dots, even/odd marks).</li>
+          <li>Click <strong>▶ Solve</strong>. The solver will fill the grid and show step-by-step reasoning on the right.</li>
+          <li>Use <strong>Export JSON</strong> to save the puzzle; <strong>Import JSON</strong> to restore one.</li>
+        </ol>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="solver.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

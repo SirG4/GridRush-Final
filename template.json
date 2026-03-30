@@ -1,0 +1,437 @@
+{
+  "_meta": {
+    "total_puzzles": 6,
+    "description": "GridRush puzzle collection. Each puzzle has a 9x9 Sudoku grid (0 = empty) and optional variant constraints.",
+    "constraint_types": ["even_odd", "killer", "thermo", "arrow", "kropki"]
+  },
+
+  "puzzles": [
+
+    {
+      "id": "P001",
+      "name": "Classic Kickstart",
+      "difficulty": "easy",
+      "active_constraints": ["even_odd", "kropki"],
+      "grid": {
+        "_comment": "9x9 grid. Use 0 for empty cells.",
+        "rows": [
+          [5, 3, 0,  0, 7, 0,  0, 0, 0],
+          [6, 0, 0,  1, 9, 5,  0, 0, 0],
+          [0, 9, 8,  0, 0, 0,  0, 6, 0],
+
+          [8, 0, 0,  0, 6, 0,  0, 0, 3],
+          [4, 0, 0,  8, 0, 3,  0, 0, 1],
+          [7, 0, 0,  0, 2, 0,  0, 0, 6],
+
+          [0, 6, 0,  0, 0, 0,  2, 8, 0],
+          [0, 0, 0,  4, 1, 9,  0, 0, 5],
+          [0, 0, 0,  0, 8, 0,  0, 7, 9]
+        ]
+      },
+      "constraints": {
+        "even_odd": {
+          "_comment": "Cells that must be EVEN (squares) or ODD (circles). Row/col are 0-indexed.",
+          "even_cells": [
+            {"row": 0, "col": 2},
+            {"row": 3, "col": 4}
+          ],
+          "odd_cells": [
+            {"row": 1, "col": 1},
+            {"row": 4, "col": 7}
+          ]
+        },
+        "kropki": {
+          "_comment": "Black dot = one value is exactly double the other. White dot = values are consecutive.",
+          "dots": [
+            {"type": "black", "cell_a": {"row": 0, "col": 0}, "cell_b": {"row": 0, "col": 1}},
+            {"type": "white", "cell_a": {"row": 2, "col": 3}, "cell_b": {"row": 2, "col": 4}},
+            {"type": "black", "cell_a": {"row": 5, "col": 6}, "cell_b": {"row": 6, "col": 6}}
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "P002",
+      "name": "Thermo Trails",
+      "difficulty": "medium",
+      "active_constraints": ["thermo", "killer"],
+      "grid": {
+        "_comment": "9x9 grid. Use 0 for empty cells.",
+        "rows": [
+          [0, 0, 3,  0, 2, 0,  6, 0, 0],
+          [9, 0, 0,  3, 0, 5,  0, 0, 1],
+          [0, 0, 1,  8, 0, 6,  4, 0, 0],
+
+          [0, 0, 8,  1, 0, 2,  9, 0, 0],
+          [7, 0, 0,  0, 0, 0,  0, 0, 8],
+          [0, 0, 6,  7, 0, 8,  2, 0, 0],
+
+          [0, 0, 2,  6, 0, 9,  5, 0, 0],
+          [8, 0, 0,  2, 0, 3,  0, 0, 9],
+          [0, 0, 5,  0, 1, 0,  3, 0, 0]
+        ]
+      },
+      "constraints": {
+        "thermo": {
+          "_comment": "Digits must strictly increase from bulb (first cell) to tip (last cell).",
+          "thermometers": [
+            {
+              "id": "T1",
+              "bulb": {"row": 0, "col": 0},
+              "cells": [
+                {"row": 0, "col": 0},
+                {"row": 1, "col": 1},
+                {"row": 2, "col": 2},
+                {"row": 3, "col": 3}
+              ]
+            },
+            {
+              "id": "T2",
+              "bulb": {"row": 8, "col": 8},
+              "cells": [
+                {"row": 8, "col": 8},
+                {"row": 7, "col": 7},
+                {"row": 6, "col": 6},
+                {"row": 5, "col": 5}
+              ]
+            },
+            {
+              "id": "T3",
+              "bulb": {"row": 0, "col": 8},
+              "cells": [
+                {"row": 0, "col": 8},
+                {"row": 1, "col": 7},
+                {"row": 2, "col": 6}
+              ]
+            }
+          ]
+        },
+        "killer": {
+          "_comment": "Each cage has a target sum. Digits cannot repeat within a cage.",
+          "cages": [
+            {
+              "id": "K1",
+              "sum": 11,
+              "cells": [
+                {"row": 4, "col": 1},
+                {"row": 4, "col": 2}
+              ]
+            },
+            {
+              "id": "K2",
+              "sum": 16,
+              "cells": [
+                {"row": 4, "col": 6},
+                {"row": 4, "col": 7}
+              ]
+            },
+            {
+              "id": "K3",
+              "sum": 20,
+              "cells": [
+                {"row": 0, "col": 3},
+                {"row": 1, "col": 3},
+                {"row": 0, "col": 4}
+              ]
+            }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "P003",
+      "name": "Arrow Storm",
+      "difficulty": "medium",
+      "active_constraints": ["arrow", "even_odd"],
+      "grid": {
+        "_comment": "9x9 grid. Use 0 for empty cells.",
+        "rows": [
+          [0, 2, 0,  0, 0, 0,  0, 0, 0],
+          [0, 0, 0,  6, 0, 1,  0, 0, 0],
+          [0, 1, 0,  0, 0, 0,  0, 8, 0],
+
+          [0, 0, 0,  0, 9, 0,  0, 0, 0],
+          [0, 0, 1,  0, 0, 0,  3, 0, 0],
+          [0, 0, 0,  0, 8, 0,  0, 0, 0],
+
+          [0, 7, 0,  0, 0, 0,  0, 2, 0],
+          [0, 0, 0,  3, 0, 7,  0, 0, 0],
+          [0, 0, 0,  0, 0, 0,  0, 4, 0]
+        ]
+      },
+      "constraints": {
+        "arrow": {
+          "_comment": "Digits on the arrow cells must sum to the digit in the circle cell.",
+          "arrows": [
+            {
+              "id": "A1",
+              "circle": {"row": 0, "col": 0},
+              "arrow_cells": [
+                {"row": 0, "col": 1},
+                {"row": 0, "col": 2},
+                {"row": 1, "col": 2}
+              ]
+            },
+            {
+              "id": "A2",
+              "circle": {"row": 4, "col": 4},
+              "arrow_cells": [
+                {"row": 3, "col": 4},
+                {"row": 3, "col": 5}
+              ]
+            },
+            {
+              "id": "A3",
+              "circle": {"row": 8, "col": 0},
+              "arrow_cells": [
+                {"row": 7, "col": 0},
+                {"row": 6, "col": 0},
+                {"row": 6, "col": 1}
+              ]
+            },
+            {
+              "id": "A4",
+              "circle": {"row": 2, "col": 8},
+              "arrow_cells": [
+                {"row": 3, "col": 8},
+                {"row": 4, "col": 8},
+                {"row": 4, "col": 7}
+              ]
+            }
+          ]
+        },
+        "even_odd": {
+          "even_cells": [
+            {"row": 0, "col": 4},
+            {"row": 4, "col": 0},
+            {"row": 8, "col": 4}
+          ],
+          "odd_cells": [
+            {"row": 0, "col": 8},
+            {"row": 4, "col": 8},
+            {"row": 8, "col": 0}
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "P004",
+      "name": "Kropki Cascade",
+      "difficulty": "hard",
+      "active_constraints": ["kropki", "killer", "thermo"],
+      "grid": {
+        "_comment": "9x9 grid. Use 0 for empty cells.",
+        "rows": [
+          [1, 0, 0,  0, 0, 0,  0, 0, 2],
+          [0, 0, 3,  0, 0, 0,  4, 0, 0],
+          [0, 4, 0,  0, 0, 0,  0, 5, 0],
+
+          [0, 0, 0,  1, 0, 2,  0, 0, 0],
+          [0, 0, 0,  0, 0, 0,  0, 0, 0],
+          [0, 0, 0,  5, 0, 6,  0, 0, 0],
+
+          [0, 3, 0,  0, 0, 0,  0, 2, 0],
+          [0, 0, 7,  0, 0, 0,  5, 0, 0],
+          [6, 0, 0,  0, 0, 0,  0, 0, 9]
+        ]
+      },
+      "constraints": {
+        "kropki": {
+          "dots": [
+            {"type": "black", "cell_a": {"row": 0, "col": 3}, "cell_b": {"row": 0, "col": 4}},
+            {"type": "white", "cell_a": {"row": 1, "col": 4}, "cell_b": {"row": 2, "col": 4}},
+            {"type": "black", "cell_a": {"row": 4, "col": 1}, "cell_b": {"row": 4, "col": 2}},
+            {"type": "white", "cell_a": {"row": 4, "col": 6}, "cell_b": {"row": 4, "col": 7}},
+            {"type": "black", "cell_a": {"row": 7, "col": 3}, "cell_b": {"row": 7, "col": 4}},
+            {"type": "white", "cell_a": {"row": 8, "col": 4}, "cell_b": {"row": 8, "col": 5}}
+          ]
+        },
+        "killer": {
+          "cages": [
+            {
+              "id": "K1",
+              "sum": 14,
+              "cells": [
+                {"row": 0, "col": 5},
+                {"row": 0, "col": 6},
+                {"row": 0, "col": 7}
+              ]
+            },
+            {
+              "id": "K2",
+              "sum": 8,
+              "cells": [
+                {"row": 5, "col": 0},
+                {"row": 6, "col": 0}
+              ]
+            },
+            {
+              "id": "K3",
+              "sum": 23,
+              "cells": [
+                {"row": 3, "col": 3},
+                {"row": 4, "col": 3},
+                {"row": 4, "col": 4},
+                {"row": 4, "col": 5}
+              ]
+            }
+          ]
+        },
+        "thermo": {
+          "thermometers": [
+            {
+              "id": "T1",
+              "bulb": {"row": 2, "col": 0},
+              "cells": [
+                {"row": 2, "col": 0},
+                {"row": 3, "col": 0},
+                {"row": 4, "col": 0}
+              ]
+            },
+            {
+              "id": "T2",
+              "bulb": {"row": 6, "col": 8},
+              "cells": [
+                {"row": 6, "col": 8},
+                {"row": 5, "col": 8},
+                {"row": 4, "col": 8}
+              ]
+            }
+          ]
+        }
+      }
+    },
+
+    {
+      "id": "P005",
+      "name": "Full Variant Gauntlet",
+      "difficulty": "expert",
+      "active_constraints": ["even_odd", "killer", "thermo", "arrow", "kropki"],
+      "grid": {
+        "_comment": "9x9 grid. Use 0 for empty cells.",
+        "rows": [
+          [0, 0, 0,  2, 0, 0,  5, 0, 0],
+          [0, 0, 0,  0, 9, 0,  0, 0, 3],
+          [0, 0, 4,  0, 0, 6,  0, 0, 0],
+
+          [6, 0, 0,  0, 0, 0,  0, 4, 0],
+          [0, 1, 0,  0, 0, 0,  0, 6, 0],
+          [0, 7, 0,  0, 0, 0,  0, 5, 0],
+
+          [0, 0, 0,  4, 0, 0,  8, 0, 0],
+          [5, 0, 0,  0, 2, 0,  0, 0, 0],
+          [0, 0, 9,  0, 0, 3,  0, 0, 0]
+        ]
+      },
+      "constraints": {
+        "even_odd": {
+          "even_cells": [
+            {"row": 0, "col": 0},
+            {"row": 2, "col": 8},
+            {"row": 6, "col": 0},
+            {"row": 8, "col": 8}
+          ],
+          "odd_cells": [
+            {"row": 0, "col": 8},
+            {"row": 4, "col": 4},
+            {"row": 8, "col": 0}
+          ]
+        },
+        "killer": {
+          "cages": [
+            {
+              "id": "K1",
+              "sum": 17,
+              "cells": [
+                {"row": 0, "col": 1},
+                {"row": 0, "col": 2},
+                {"row": 1, "col": 2}
+              ]
+            },
+            {
+              "id": "K2",
+              "sum": 13,
+              "cells": [
+                {"row": 3, "col": 2},
+                {"row": 3, "col": 3}
+              ]
+            },
+            {
+              "id": "K3",
+              "sum": 22,
+              "cells": [
+                {"row": 6, "col": 5},
+                {"row": 7, "col": 5},
+                {"row": 8, "col": 5},
+                {"row": 8, "col": 4}
+              ]
+            }
+          ]
+        },
+        "thermo": {
+          "thermometers": [
+            {
+              "id": "T1",
+              "bulb": {"row": 0, "col": 3},
+              "cells": [
+                {"row": 0, "col": 3},
+                {"row": 1, "col": 3},
+                {"row": 2, "col": 3},
+                {"row": 2, "col": 4}
+              ]
+            },
+            {
+              "id": "T2",
+              "bulb": {"row": 6, "col": 2},
+              "cells": [
+                {"row": 8, "col": 6},
+                {"row": 7, "col": 6},
+                {"row": 6, "col": 6}
+              ]
+            }
+          ]
+        },
+        "arrow": {
+          "arrows": [
+            {
+              "id": "A1",
+              "circle": {"row": 1, "col": 0},
+              "arrow_cells": [
+                {"row": 2, "col": 0},
+                {"row": 3, "col": 0}
+              ]
+            },
+            {
+              "id": "A2",
+              "circle": {"row": 5, "col": 4},
+              "arrow_cells": [
+                {"row": 5, "col": 3},
+                {"row": 5, "col": 2}
+              ]
+            },
+            {
+              "id": "A3",
+              "circle": {"row": 7, "col": 8},
+              "arrow_cells": [
+                {"row": 6, "col": 8},
+                {"row": 6, "col": 7}
+              ]
+            }
+          ]
+        },
+        "kropki": {
+          "dots": [
+            {"type": "white", "cell_a": {"row": 0, "col": 4}, "cell_b": {"row": 0, "col": 5}},
+            {"type": "black", "cell_a": {"row": 1, "col": 6}, "cell_b": {"row": 2, "col": 6}},
+            {"type": "white", "cell_a": {"row": 4, "col": 0}, "cell_b": {"row": 5, "col": 0}},
+            {"type": "black", "cell_a": {"row": 7, "col": 1}, "cell_b": {"row": 7, "col": 2}},
+            {"type": "white", "cell_a": {"row": 8, "col": 7}, "cell_b": {"row": 8, "col": 8}}
+          ]
+        }
+      }
+    }
+  ]
+}
