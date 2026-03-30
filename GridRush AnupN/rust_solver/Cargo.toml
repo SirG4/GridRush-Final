@@ -1,0 +1,21 @@
+[package]
+name = "grid_rush"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "grid_rush"
+path = "src/main.rs"
+
+[dependencies]
+serde_json = { version = "1", features = ["preserve_order"] }
+rayon = "1.8"
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+
+[profile.release.build-override]
+opt-level = 3
