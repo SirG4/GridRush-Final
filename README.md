@@ -102,6 +102,13 @@ cmake -S . -B build-win
 cmake --build build-win
 ```
 
+If CMake is installed but not in `PATH`, `install.bat` also supports:
+
+```powershell
+$env:CMAKE_EXE_OVERRIDE="C:\Program Files\CMake\bin\cmake.exe"
+.\install.bat
+```
+
 Expected binary:
 
 1. `build-win/sudoku_solver.exe`
@@ -111,6 +118,12 @@ Expected binary:
 ```bash
 cmake -S . -B build
 cmake --build build
+```
+
+If CMake is installed in a custom location, `install.sh` supports:
+
+```bash
+CMAKE_BIN=/custom/path/cmake ./install.sh
 ```
 
 Expected binary:

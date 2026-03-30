@@ -23,6 +23,12 @@ const SOLVER_CANDIDATES = [
   path.join(ROOT, 'build', 'MinSizeRel', 'sudoku_solver.exe'),
 ];
 
+const BUILD_HELP_MESSAGE = [
+  'Solver binary not found or failed to run.',
+  'Build backend from repository root with ./install.bat (Windows) or ./install.sh (macOS/Linux).',
+  'If CMake is not in PATH: set CMAKE_EXE_OVERRIDE on Windows or CMAKE_BIN on macOS/Linux.',
+].join(' ');
+
 app.use(cors());
 app.use(express.json({ limit: '2mb' }));
 app.use(express.static(path.join(ROOT, 'frontend')));
@@ -278,7 +284,7 @@ app.post('/api/solve', async (req, res) => {
     if (!solverBin) {
       return res.status(500).json({
         ok: false,
-        error: 'Solver binary not found. Build backend first with cmake -S . -B build && cmake --build build',
+        error: BUILD_HELP_MESSAGE,
         lookedIn: SOLVER_CANDIDATES,
       });
     }
@@ -342,7 +348,7 @@ app.post('/api/solve', async (req, res) => {
 
         return res.status(500).json({
           ok: false,
-          error: 'Solver execution failed. Ensure C++ solver is built: cmake -S . -B build && cmake --build build',
+          error: BUILD_HELP_MESSAGE,
           details: output || err.message,
         });
       }

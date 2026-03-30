@@ -97,8 +97,15 @@ def generate_and_append(
 ) -> tuple[int, int]:
     rng = random.Random(seed)
 
-    with file_path.open("r", encoding="utf-8") as f:
-        data = json.load(f)
+    raw = file_path.read_text(encoding="utf-8")
+    if not raw.strip():
+        data: dict[str, Any] = {}
+    else:
+        try:
+            data = json.loads(raw)
+        except json.JSONDecodeError:
+            # Recover from placeholder/comment-only files and rebuild expected shape.
+            data = {}
 
     if not isinstance(data, dict):
         raise ValueError("question.json root must be an object")
